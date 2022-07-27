@@ -2,10 +2,10 @@ provider "google" {
     project = var.project_id
 }
 resource "google_compute_network" "apigee_network" {
-  name       = "apigee-network"
+  name       = var.network
 }
 resource "google_compute_global_address" "apigee_range" {
-  name          = "apigee-range"
+  name          = var.google_compute_global_address
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
@@ -30,8 +30,8 @@ resource "google_project_service" "apis" {
      disable_on_destroy = false
      }
 resource "google_apigee_organization" "apigeex_org" { 
-  analytics_region   = "us-east1"
-  project_id         = var.project_id
+  analytics_region   = var.region
+  project_id         = var.project_id2
   authorized_network = google_compute_network.apigee_network.id
   depends_on         = [
     google_service_networking_connection.apigee_vpc_connection,
@@ -39,19 +39,19 @@ resource "google_apigee_organization" "apigeex_org" {
   ]
 }
 resource "google_apigee_environment" "apigee_org_region_env" {
-  name         = "apigee-env-dev"
+  name         = var.google_apigee_environment
   description  = "apigee-env-dev"
   display_name = "apigee-env-dev"
   org_id       = google_apigee_organization.apigeex_org.id
 }
 resource "google_apigee_envgroup" "env_grp_dev" {
-  name      = "tf-dev-internal"
+  name      = var.google_apigee_envgroup
   hostnames = ["grp.test.com"]
   org_id    = google_apigee_organization.apigeex_org.id
 }
 resource "google_apigee_instance" "apigee_instance" {
-  name     = "apigee-org-instance-us-east1"
-  location = "us-east1"
+  name     = var.google_apigee_instance
+  location = var.region
   org_id   = google_apigee_organization.apigeex_org.id
 }
 resource "google_apigee_instance_attachment" "apigee_instance_attachment" {
@@ -59,28 +59,24 @@ resource "google_apigee_instance_attachment" "apigee_instance_attachment" {
   environment  = google_apigee_environment.apigee_org_region_env.name
 }
 resource "google_compute_region_backend_service" "producer_service_backend" {
-  name          = "producer-service"
-  project       = var.project_id
-  region        = "us-east1"
+  name          = var.google_compute_region_backend_service
+  project       = var.project_id2
+  region        = var.region
   health_checks = [google_compute_health_check.producer_service_health_check.id]
 }
 resource "google_compute_health_check" "producer_service_health_check" {
-  name                = "producer-service-health-check"
-  project             = var.project_id
+  name                = var.google_compute_health_check
+  project             = var.project_id2
   check_interval_sec  = 1
   timeout_sec         = 1
   tcp_health_check {
     port = "80"
   }
 }
-data "google_project" "project"{
-
-}
-
 resource "google_compute_forwarding_rule" "apigee_ilb_target_service" {
-   name                  = "apigee-forwarding-rule"
-   region                = "us-east1"
-   project               = var.project_id
+   name                  = var.google_compute_forwarding_rule
+   region                = var.region
+   project               = var.project_id2
    load_balancing_scheme = "INTERNAL"
    backend_service       = google_compute_region_backend_service.producer_service_backend.id
    all_ports             = true
