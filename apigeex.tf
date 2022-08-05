@@ -38,12 +38,12 @@ resource "google_apigee_organization" "apigeex_org" {
     //google_project_service.apis.apigee,
   ]
 }
-/*resource "google_apigee_environment" "apigee_org_region_env" {
+resource "google_apigee_environment" "apigee_org_region_env" {
   name         = var.google_apigee_environment
   description  = "apigee-env-dev"
   display_name = "apigee-env-dev"
   org_id       = google_apigee_organization.apigeex_org.id
-}*/
+}
 resource "google_apigee_envgroup" "env_grp_dev" {
   name      = var.google_apigee_envgroup
   hostnames = ["grp.test.com"]
