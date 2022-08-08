@@ -1,5 +1,4 @@
 project_id = "internal-test-prj-ly"
-project_id2 = "spatial-ship-354209"
 network = "apigee-network"
 google_compute_global_address="apigee-range"
 region="us-east1"
