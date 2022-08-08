@@ -1,6 +1,6 @@
 project_id = "internal-test-prj-ly"
 network = "apigee-network1"
-google_compute_global_address="apigee-range"
+google_compute_global_address="apigee-range1"
 region="us-east1"
 google_apigee_environment="apigee-env-dev1"
 google_apigee_envgroup="tf-dev-internal1"
