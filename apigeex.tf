@@ -31,7 +31,7 @@ resource "google_project_service" "apis" {
      }
 resource "google_apigee_organization" "apigeex_org" { 
   analytics_region   = var.region
-  project_id         = var.project_id2
+  project_id         = var.project_id
   authorized_network = google_compute_network.apigee_network.id
   depends_on         = [
     google_service_networking_connection.apigee_vpc_connection,
@@ -60,13 +60,13 @@ resource "google_apigee_instance_attachment" "apigee_instance_attachment" {
 }
 resource "google_compute_region_backend_service" "producer_service_backend" {
   name          = var.google_compute_region_backend_service
-  project       = var.project_id2
+  project       = var.project_id
   region        = var.region
   health_checks = [google_compute_health_check.producer_service_health_check.id]
 }
 resource "google_compute_health_check" "producer_service_health_check" {
   name                = var.google_compute_health_check
-  project             = var.project_id2
+  project             = var.project_id
   check_interval_sec  = 1
   timeout_sec         = 1
   tcp_health_check {
@@ -76,7 +76,7 @@ resource "google_compute_health_check" "producer_service_health_check" {
 resource "google_compute_forwarding_rule" "apigee_ilb_target_service" {
    name                  = var.google_compute_forwarding_rule
    region                = var.region
-   project               = var.project_id2
+   project               = var.project_id
    load_balancing_scheme = "INTERNAL"
    backend_service       = google_compute_region_backend_service.producer_service_backend.id
    all_ports             = true
